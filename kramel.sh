@@ -213,7 +213,7 @@ img() {
     time make -j"$PROCS" "${MAKE[@]}" DTC_EXT=${KDIR}/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y CONFIG_SECTION_MISMATCH_WARN_ONLY=y 2>&1 | tee log.txt
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
-    if [ -f "${KDIR}/out/arch/arm64/boot/Image.gz-dtb" ]; then
+    if [ -f "${KDIR}/out/arch/arm64/boot/Image" ]; then
         if [[ "${SILENT}" != "1" ]]; then
             tg "*Kernel Built after $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)*"
         fi
@@ -319,7 +319,7 @@ mkzip() {
         tg "*Building zip!*"
     fi
     echo -e "\n\e[1;93m[*] Building zip! \e[0m"
-    mv "${KDIR}"/out/arch/arm64/boot/Image.gz-dtb "${KDIR}"/anykernel3
+    mv "${KDIR}"/out/arch/arm64/boot/Image "${KDIR}"/anykernel3
     cd "${KDIR}"/anykernel3 || exit 1
     zip -r9 "$zipn".zip . -x ".git*" -x "README.md" -x "LICENSE" -x "*.zip"
     echo -e "\n\e[1;32m[✓] Built zip! \e[0m"
