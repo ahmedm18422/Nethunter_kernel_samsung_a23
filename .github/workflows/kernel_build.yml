@@ -64,6 +64,9 @@ jobs:
         scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_CONTEXT_TRACKING
         scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_CONTEXT_TRACKING_FORCE
 
+        # Patch WALT API mismatch: Samsung fair.c calls prefer_spread_on_idle(cpu, bool) but walt.h defines it with 1 arg
+        sed -i 's/prefer_spread_on_idle(int cpu)/prefer_spread_on_idle(int cpu, bool unused)/' kernel/sched/walt.h
+
         # Generate .config from defconfig
         make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang nethunter_defconfig
 
