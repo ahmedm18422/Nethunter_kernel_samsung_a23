@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: kernel-zip
-        path: out
+        path: anykernel3/*.zip
