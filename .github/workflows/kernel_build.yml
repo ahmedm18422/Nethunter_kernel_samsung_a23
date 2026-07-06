@@ -77,20 +77,20 @@ jobs:
         # Build Image.gz
         make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang DTC_EXT=$KDIR/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y CONFIG_SECTION_MISMATCH_WARN_ONLY=y 2>&1 | tee log.txt
 
-        # Build DTBs
-        make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang DTC_EXT=$KDIR/tools/dtc dtbs 2>&1 | tee -a log.txt
+        # Build DTB for A23 (khaje = SM6225 SoC)
+        make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang DTC_EXT=$KDIR/tools/dtc vendor/qcom/khaje.dtb 2>&1 | tee -a log.txt
 
-        # Find the right DTB for A23 (typically in samsung/a23 directory)
-        A23_DTB=$(find out/arch/arm64/boot/dts -name "a23*.dtb" | head -1)
-        if [ -z "$A23_DTB" ]; then
-          A23_DTB=$(find out/arch/arm64/boot/dts -name "khaje*.dtb" | head -1)
-        fi
-        if [ -z "$A23_DTB" ]; then
-          A23_DTB=$(find out/arch/arm64/boot/dts -name "*.dtb" | head -1)
-        fi
-        if [ -n "$A23_DTB" ] && [ -f out/arch/arm64/boot/Image.gz ]; then
-          cat out/arch/arm64/boot/Image.gz $A23_DTB > out/arch/arm64/boot/Image.gz-dtb
-          echo "Created Image.gz-dtb from $A23_DTB"
+        # Append DTB to Image.gz
+        if [ -f out/arch/arm64/boot/Image.gz ]; then
+          # Try multiple locations for the DTB
+          A23_DTB=""
+          for p in out/arch/arm64/boot/dts/vendor/qcom/khaje.dtb out/arch/arm64/boot/dts/khaje.dtb; do
+            if [ -f "$p" ]; then A23_DTB="$p"; break; fi
+          done
+          if [ -n "$A23_DTB" ]; then
+            cat out/arch/arm64/boot/Image.gz $A23_DTB > out/arch/arm64/boot/Image.gz-dtb
+            echo "Created Image.gz-dtb from $A23_DTB"
+          fi
         fi
 
         # Check result
