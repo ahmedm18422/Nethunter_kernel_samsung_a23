@@ -63,6 +63,7 @@ jobs:
         scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_NO_HZ_IDLE
         scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_CONTEXT_TRACKING
         scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_CONTEXT_TRACKING_FORCE
+        scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_INPUT_SEC_INPUT
 
         # Patch WALT API mismatch: Samsung fair.c calls prefer_spread_on_idle(cpu, bool) but walt.h defines it with 1 arg
         sed -i 's/prefer_spread_on_idle(int cpu)/prefer_spread_on_idle(int cpu, bool unused)/' kernel/sched/walt.h
