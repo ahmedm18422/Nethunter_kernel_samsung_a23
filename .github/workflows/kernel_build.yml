@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git wget curl ccache flex bison build-essential zip libssl-dev bc python3 cpio kmod libelf-dev lz4 unzip
+        sudo apt-get install -y git wget curl ccache flex bison build-essential zip libssl-dev bc python3 cpio kmod libelf-dev lz4 unzip dialog
 
     - name: Set swap
       run: |
@@ -29,15 +29,17 @@ jobs:
 
     - name: Build Kernel
       run: |
+        export ci=1
         export ARCH=arm64
         export SUBARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
         export CROSS_COMPILER_ARM32=arm-linux-gnueabihf-
-        export VERSION=4.19.157
-        kver=1 zipn=Nethunter-a23-4.19.157 bash kramel.sh img mkzip
+        export version=4.19.157
+        export BUILDER="GitHubActions"
+        bash kramel.sh img mkzip
 
     - name: Upload Kernel ZIP
       uses: actions/upload-artifact@v4
       with:
         name: kernel-zip
-        path: anykernel3/*.zip
+        path: anykernel3/
