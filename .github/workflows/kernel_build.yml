@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git wget curl ccache flex bison build-essential zip libssl-dev bc python3 cpio kmod libelf-dev lz4 unzip
+        sudo apt-get install -y git wget curl flex bison build-essential zip libssl-dev bc python3 cpio kmod libelf-dev lz4 unzip gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf
 
     - name: Set swap
       run: |
@@ -33,22 +33,7 @@ jobs:
         KDIR=$(pwd)
         export ARCH=arm64
         export SUBARCH=arm64
-
-        # Download clang
-        mkdir -p clang
-        wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-12.0.0_r12/clang-r416183b1.tar.gz
-        tar -xf clang.tar.gz -C clang
-        rm -rf clang.tar.gz
-
-        # Download GCC
-        git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 arm64-gcc
-        git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 arm-gcc
-
-        export PATH=$KDIR/clang/bin:$KDIR/arm64-gcc/bin:$KDIR/arm-gcc/bin:/usr/bin:$PATH
-        export CROSS_COMPILE=aarch64-linux-android-
-        export CROSS_COMPILER_ARM32=arm-linux-androideabi-
-        export CLANG_TRIPLE=aarch64-linux-gnu-
-        export CC=$KDIR/clang/bin/clang
+        export CROSS_COMPILE=aarch64-linux-gnu-
 
         # AnyKernel3
         git clone --depth=1 https://github.com/MrR0b0X/anykernel3 -b a23 anykernel3
@@ -57,10 +42,10 @@ jobs:
         scripts/config --file arch/arm64/configs/nethunter_defconfig --set-str CONFIG_LOCALVERSION "-MrR0b0X-4.19.157"
 
         # Generate .config from defconfig
-        make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang nethunter_defconfig
+        make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-gnu- nethunter_defconfig
 
         # Build
-        make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang DTC_EXT=$KDIR/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y CONFIG_SECTION_MISMATCH_WARN_ONLY=y 2>&1 | tee log.txt
+        make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-gnu- DTC_EXT=$KDIR/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y CONFIG_SECTION_MISMATCH_WARN_ONLY=y 2>&1 | tee log.txt
 
         # Check result
         if [ -f out/arch/arm64/boot/Image.gz-dtb ]; then
