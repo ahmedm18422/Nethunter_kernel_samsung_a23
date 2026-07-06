@@ -58,6 +58,11 @@ jobs:
 
         # Bump version in defconfig
         scripts/config --file arch/arm64/configs/nethunter_defconfig --set-str CONFIG_LOCALVERSION "-MrR0b0X-4.19.157"
+        scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_NO_HZ_COMMON
+        scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_NO_HZ_FULL
+        scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_NO_HZ_IDLE
+        scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_CONTEXT_TRACKING
+        scripts/config --file arch/arm64/configs/nethunter_defconfig --enable CONFIG_CONTEXT_TRACKING_FORCE
 
         # Generate .config from defconfig
         make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang nethunter_defconfig
