@@ -17,9 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev zlib1g-dev:i386 g++-multilib libxml2-utils bzip2 libbz2-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make libssl-dev bc libc6-dev-i386 lib32ncurses-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python3 cpio kmod dwarves libelf-dev
-        sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
-        sudo apt-get install -y gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
+        sudo apt-get install -y git wget curl ccache flex bison build-essential zip libssl-dev bc python3 cpio kmod libelf-dev lz4 unzip
 
     - name: Set swap
       run: |
@@ -35,7 +33,8 @@ jobs:
         export SUBARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
         export CROSS_COMPILER_ARM32=arm-linux-gnueabihf-
-        bash kramel.sh
+        export VERSION=4.19.157
+        kver=1 zipn=Nethunter-a23-4.19.157 bash kramel.sh img mkzip
 
     - name: Upload Kernel ZIP
       uses: actions/upload-artifact@v4
