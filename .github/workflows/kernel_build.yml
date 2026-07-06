@@ -56,6 +56,9 @@ jobs:
         # Bump version in defconfig
         scripts/config --file arch/arm64/configs/nethunter_defconfig --set-str CONFIG_LOCALVERSION "-MrR0b0X-4.19.157"
 
+        # Generate .config from defconfig
+        make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang nethunter_defconfig
+
         # Build
         make -j$(nproc) ARCH=arm64 O=out CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILER_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=$KDIR/clang/bin/clang DTC_EXT=$KDIR/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y CONFIG_SECTION_MISMATCH_WARN_ONLY=y 2>&1 | tee log.txt
 
